@@ -1,11 +1,18 @@
+
+# 必要なライブラリのインポート
 from dotenv import load_dotenv
 import os
-load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
-
 import streamlit as st
 from langchain_openai import ChatOpenAI
 from langchain.schema import SystemMessage, HumanMessage
-import os
+
+# .envファイルの読み込み（streamlit-llm-app直下）
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+
+# OpenAI APIキーの取得
+openai_api_key = os.getenv("OPENAI_API_KEY")
+if not openai_api_key:
+	st.error("OpenAI APIキーが設定されていません。.envファイルまたは環境変数を確認してください。")
 
 # Webアプリの概要・操作説明
 st.title("専門家AI相談アプリ")
@@ -23,9 +30,6 @@ expert_types = {
 	"法律の専門家": "あなたは経験豊富な弁護士です。法律的な観点から、分かりやすく丁寧に回答してください。",
 	"ITの専門家": "あなたはIT分野のプロフェッショナルです。技術的な観点から、分かりやすく丁寧に回答してください。"
 }
-
-# OpenAI APIキーの取得（環境変数から）
-openai_api_key = os.getenv("OPENAI_API_KEY")
 
 # LLM応答関数
 def get_llm_response(input_text: str, expert_type: str) -> str:
@@ -49,4 +53,3 @@ if submitted and input_text:
 		answer = get_llm_response(input_text, expert_type)
 	st.markdown("### AIの回答")
 	st.write(answer)
-
